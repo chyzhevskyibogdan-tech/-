@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Академія Рибалки — Тест та гайд для новачків</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        
+        .heading-font {
+            font-family: 'Comfortaa', cursive;
+        }
+        
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .option-card {
+            transition: all 0.2s ease;
+        }
+        
+        .option-card:hover {
+            transform: translateY(-2px);
+            border-color: #38bdf8;
+            background: rgba(56, 189, 248, 0.08);
+        }
+
+        .option-card.selected {
+            border-color: #0ea5e9;
+            background: rgba(14, 165, 233, 0.15);
+        }
+
+        .option-card.correct {
+            border-color: #22c55e !important;
+            background: rgba(34, 197, 94, 0.15) !important;
+        }
+
+        .option-card.wrong {
+            border-color: #ef4444 !important;
+            background: rgba(239, 68, 68, 0.15) !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-900/80 sticky top-0 z-50 backdrop-blur">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-amber-500 text-slate-950 p-2.5 rounded-xl shadow-lg shadow-amber-500/20">
+                    <i class="fa-solid fa-fish fa-lg"></i>
+                </div>
+                <div>
+                    <h1 class="heading-font text-xl font-bold text-slate-100">Академія Рибалки</h1>
+                    <p class="text-xs text-slate-400">Базовий курс та інтерактивний тест</p>
+                </div>
+            </div>
+            <div class="hidden sm:flex items-center space-x-2 text-xs font-semibold bg-slate-800 text-amber-400 px-3 py-1.5 rounded-full border border-slate-700">
+                <i class="fa-solid fa-hook"></i>
+                <span>Рівень: Початківець</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-8 w-full flex-grow">
+        
+        <!-- Intro Banner -->
+        <div class="glass-panel rounded-2xl p-6 mb-8 relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 opacity-10 text-amber-500">
+                <i class="fa-solid fa-water-ladder text-9xl"></i>
+            </div>
+            <h2 class="heading-font text-2xl font-bold text-amber-400 mb-2">Готові до першої риболовлі? 🎣</h2>
+            <p class="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl">
+                Перевірте свої знання з вибору снастей, підгодовування, наживок та безпеки на водоймі перед тим, як вирушити на риболовлю!
+            </p>
+        </div>
+
+        <!-- Quiz Container -->
+        <div id="quiz-card" class="glass-panel rounded-2xl p-6 sm:p-8 shadow-xl">
+            <!-- Progress Bar -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center text-xs font-semibold text-slate-400 mb-2">
+                    <span id="question-number">Питання 1 з 5</span>
+                    <span id="score-counter" class="text-amber-400">Бали: 0</span>
+                </div>
+                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="bg-gradient-to-r from-amber-500 to-amber-300 h-full w-1/5 transition-all duration-300"></div>
+                </div>
+            </div>
+
+            <!-- Question Area -->
+            <div id="question-container">
+                <h3 id="question-text" class="text-lg sm:text-xl font-semibold text-slate-100 mb-6">
+                    Текст питання...
+                </h3>
+
+                <!-- Options -->
+                <div id="options-container" class="space-y-3 mb-6">
+                    <!-- Dinamically generated -->
+                </div>
+
+                <!-- Explanation Box -->
+                <div id="explanation-box" class="hidden p-4 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-300 mb-6">
+                    <div class="flex items-start space-x-2">
+                        <i class="fa-solid fa-circle-info text-amber-400 mt-0.5"></i>
+                        <p id="explanation-text"></p>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <div class="flex justify-end">
+                    <button id="action-btn" onclick="checkAnswer()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold px-6 py-2.5 rounded-xl transition duration-200 shadow-md shadow-amber-500/20 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Відповісти
+                    </button>
+                </div>
+            </div>
+
+            <!-- Result Screen (Hidden by default) -->
+            <div id="result-container" class="hidden text-center py-6">
+                <div class="inline-flex p-4 bg-amber-500/10 text-amber-400 rounded-full mb-4">
+                    <i class="fa-solid fa-trophy text-4xl"></i>
+                </div>
+                <h3 class="heading-font text-2xl font-bold text-slate-100 mb-2">Тест завершено!</h3>
+                <p id="result-message" class="text-slate-300 mb-6">Ваш результат: 0 з 5</p>
+                
+                <div class="p-4 rounded-xl bg-slate-800/60 max-w-md mx-auto mb-6 text-sm text-slate-300">
+                    <p id="result-feedback"></p>
+                </div>
+
+                <button onclick="restartQuiz()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold px-6 py-2.5 rounded-xl transition duration-200 shadow-md shadow-amber-500/20">
+                    Пройти знову <i class="fa-solid fa-rotate-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+        <p>© 2026 Академія Рибалки. Ні хвоста, ні луски!</p>
+    </footer>
+
+    <script>
+        const questions = [
+            {
+                question: "Який вузол вважається найпопулярнішим та найнадійнішим для прив'язування гачка з вушком?",
+                options: [
+                    "Клінч (Clinch knot)",
+                    "Звичайний бантик",
+                    "Морський вузол",
+                    "Прямий вузол"
+                ],
+                correct: 0,
+                explanation: "Вузол «Клінч» збережує до 95% міцності волосіні та є найпростішим у виконанні для новачків."
+            },
+            {
+                question: "Яка наживка найкраще підходить для лову мирної риби (карась, плітка) навесні?",
+                options: [
+                    "Силіконова рибка",
+                    "Мотиль або опариш",
+                    "Кукурудза",
+                    "Блешня"
+                ],
+                correct: 1,
+                explanation: "Навесні вода ще холодна, і рибі потрібен висококалорійний білковий корм тваринного походження (мотиль, опариш, черв'як)."
+            },
+            {
+                question: "Для чого використовують флюорокарбоновий поводок?",
+                options: [
+                    "Щоб вудка краще гнулася",
+                    "Він майже непомітний у воді та стійкий до тертя",
+                    "Щоб риба краще бачила наживку",
+                    "Для збільшення ваги снасті"
+                ],
+                correct: 1,
+                explanation: "Флюорокарбон має коефіцієнт заломлення світла, близький до води, тому риба його майже не бачить."
+            },
+            {
+                question: "Що означає рибальська абревіатура 'НХНЛ'?",
+                options: [
+                    "Наживки Хватай На Літо",
+                    "Ні Хвоста, Ні Луски",
+                    "Нова Хвиля На Лимані",
+                    "Не Хвилюйся, Наживи Лосося"
+                ],
+                correct: 1,
+                explanation: "«Ні хвоста, ні луски» (НХНЛ) — традиційне побажання удачі серед рибалок."
+            },
+            {
+                question: "Як слід поводитися на березі під час лову обережної риби (наприклад, коропа)?",
+                options: [
+                    "Голосно розмовляти та вмикати музику",
+                    "Дотримуватися тиші та не створювати зайвого шуму/вібрацій",
+                    "Яскраво одягатися та активно розмахувати руками",
+                    "Кидати каміння у воду для приваблення риби"
+                ],
+                correct: 1,
+                explanation: "Вода чудово проводить звуки та вібрації. Зайвий шум на березі відлякує велику та обережну рибу."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedOption = null;
+
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const questionNumber = document.getElementById('question-number');
+        const scoreCounter = document.getElementById('score-counter');
+        const progressBar = document.getElementById('progress-bar');
+        const explanationBox = document.getElementById('explanation-box');
+        const explanationText = document.getElementById('explanation-text');
+        const actionBtn = document.getElementById('action-btn');
+
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            questionText.textContent = q.question;
+            questionNumber.textContent = `Питання ${currentQuestion + 1} з ${questions.length}`;
+            progressBar.style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+            
+            optionsContainer.innerHTML = '';
+            selectedOption = null;
+            explanationBox.classList.add('hidden');
+            actionBtn.textContent = 'Відповісти';
+            actionBtn.setAttribute('onclick', 'checkAnswer()');
+            actionBtn.disabled = true;
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('div');
+                btn.className = 'option-card glass-panel p-4 rounded-xl cursor-pointer flex items-center justify-between text-sm sm:text-base text-slate-200';
+                btn.onclick = () => selectOption(idx, btn);
+                btn.innerHTML = `
+                    <span>${opt}</span>
+                    <i class="fa-regular fa-circle text-slate-500 check-icon"></i>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectOption(index, element) {
+            if (actionBtn.textContent === 'Далі') return; // якщо вже відповіли
+
+            const allOptions = optionsContainer.children;
+            for (let opt of allOptions) {
+                opt.classList.remove('selected');
+                opt.querySelector('.check-icon').className = 'fa-regular fa-circle text-slate-500 check-icon';
+            }
+
+            element.classList.add('selected');
+            element.querySelector('.check-icon').className = 'fa-solid fa-circle-check text-amber-400 check-icon';
+            selectedOption = index;
+            actionBtn.disabled = false;
+        }
+
+        function checkAnswer() {
+            if (selectedOption === null) return;
+
+            const q = questions[currentQuestion];
+            const allOptions = optionsContainer.children;
+
+            if (selectedOption === q.correct) {
+                score++;
+                scoreCounter.textContent = `Бали: ${score}`;
+                allOptions[selectedOption].classList.add('correct');
+            } else {
+                allOptions[selectedOption].classList.add('wrong');
+                allOptions[q.correct].classList.add('correct');
+            }
+
+            explanationText.textContent = q.explanation;
+            explanationBox.classList.remove('hidden');
+
+            actionBtn.textContent = 'Далі';
+            actionBtn.setAttribute('onclick', 'nextQuestion()');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('question-container').classList.add('hidden');
+            document.getElementById('result-container').classList.remove('hidden');
+            
+            document.getElementById('result-message').textContent = `Ваш результат: ${score} з ${questions.length}`;
+            
+            const feedback = document.getElementById('result-feedback');
+            if (score === questions.length) {
+                feedback.textContent = "Вітаємо! Ви справжній знавець рибалки. Можна сміливо вирушати на водойму! 🏆";
+            } else if (score >= 3) {
+                feedback.textContent = "Гарний результат! Ви маєте хорошу базову підготовку. 🐟";
+            } else {
+                feedback.textContent = "Не засмучуйтеся! Почитайте більше про снасті та спробуйте ще раз. 📚";
+            }
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            scoreCounter.textContent = `Бали: 0`;
+            document.getElementById('question-container').classList.remove('hidden');
+            document.getElementById('result-container').classList.add('hidden');
+            loadQuestion();
+        }
+
+        // Initialize quiz
+        loadQuestion();
+    </script>
+</body>
+</html>
